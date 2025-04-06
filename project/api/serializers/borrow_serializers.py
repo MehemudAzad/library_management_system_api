@@ -46,7 +46,7 @@ class ReturnBookSerializer(serializers.Serializer):
     def validate(self, data):
         try:
             borrow = BorrowRecord.objects.get(pk=data['borrowId'], returnDate__isnull=True)
-        except Borrow.DoesNotExist:
+        except BorrowRecord.DoesNotExist:
             raise serializers.ValidationError("Borrow record not found or already returned.")
         data['borrow'] = borrow
         return data
