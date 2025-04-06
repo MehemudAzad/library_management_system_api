@@ -16,3 +16,21 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
         )
         return user
+
+
+class MemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ('memberId', 'email', 'name', 'phone', 'membershipDate')
+
+
+class UpdateMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Member
+        fields = ('name', 'phone')
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.save()
+        return instance
