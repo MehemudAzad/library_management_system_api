@@ -23,11 +23,11 @@ class MemberListView(APIView):
         )
 
 
-# Read Member by memberId
+# Read Member by id
 class MemberDetailView(APIView):
-    def get(self, request, memberId):
+    def get(self, request, id):
         try:
-            member = Member.objects.get(memberId=memberId)
+            member = Member.objects.get(id=id)
             serializer = MemberSerializer(member)
             return Response(
                 {
@@ -51,9 +51,9 @@ class MemberDetailView(APIView):
 
 # Update Member
 class MemberUpdateView(APIView):
-    def put(self, request, memberId):
+    def put(self, request, id):
         try:
-            member = Member.objects.get(memberId=memberId)
+            member = Member.objects.get(id=id)
             serializer = MemberSerializer(member, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -88,9 +88,9 @@ class MemberUpdateView(APIView):
 
 # Delete Member
 class MemberDeleteView(APIView):
-    def delete(self, request, memberId):
+    def delete(self, request, id):
         try:
-            member = Member.objects.get(memberId=memberId)
+            member = Member.objects.get(id=id)
             member.delete()
             return Response(
                 {

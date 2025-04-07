@@ -12,11 +12,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 load_dotenv()
 
-# ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ["*"]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,6 +33,16 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
 
+# JWT authentication settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token expires in 30 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token expires in 7 days
+    'ROTATE_REFRESH_TOKENS': False,                   # Whether to rotate the refresh token
+    'BLACKLIST_AFTER_ROTATION': True,                 # Whether to blacklist refresh tokens after rotation
+    'ALGORITHM': 'HS256',                             # The algorithm used for encoding the JWT
+    'SIGNING_KEY': 'your-secret-key',                 # Secret key for signing the JWT
+}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,8 +54,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # External packages
     "rest_framework",
+    "rest_framework_simplejwt",
     # Internal apps
     "api",
+     # Cloudinary apps
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -129,15 +144,40 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'api.Member'
+AUTH_USER_MODEL = "api.Member"
 
 # In your view or globally in settings.py
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
+        # "rest_framework.permissions.IsAuthenticated",
         "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        # 'rest_framework.authentication.TokenAuthentication',  # Comment out if not using token auth
-        # 'rest_framework.authentication.SessionAuthentication',  # Comment out if not using session auth
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    # "AUTHENTICATION_BACKENDS": [
+    #     "django.contrib.auth.backends.ModelBackend",
+    # ],
+    # "EXCEPTION_HANDLER": "utils.exceptions.custom_exception_handler",
 }
+
+your_api_key = os.environ.get("CLOUDINARY_API_KEY")
+your_api_secret = os.environ.get("CLOUDINARY_API_SECRET")
+your_cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME")
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": your_cloud_name,
+    "API_KEY": your_api_key,
+    "API_SECRET": your_api_secret,
+}
+
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
+# You can also configure the URL for images directly if you'd like to use them in templates
+CLOUDINARY_URL = f"cloudinary://{your_api_key}:{your_api_secret}@{your_cloud_name}"
+print(CLOUDINARY_URL)
+
+# Cloudinary Credentials
+MEDIA_URL = "/media/"  # Default for media files
+
+

@@ -4,18 +4,19 @@ from rest_framework import serializers
 from ..models import BorrowRecord, Book, Member
 from django.utils import timezone
 
+
 class BorrowBookSerializer(serializers.ModelSerializer):
     bookId = serializers.UUIDField(write_only=True)
-    memberId = serializers.UUIDField(write_only=True)
+    id = serializers.UUIDField(write_only=True)  # Changed from 'memberId' to 'id'
 
     class Meta:
         model = BorrowRecord
-        fields = ['borrowId', 'bookId', 'memberId', 'borrowDate']
-        read_only_fields = ['borrowId', 'borrowDate']
+        fields = ["borrowId", "bookId", "id", "borrowDate"]  # Updated field name here
+        read_only_fields = ["borrowId", "borrowDate"]
 
     def validate(self, data):
         try:
-            book = Book.objects.get(pk=data['bookId'])
+            book = Book.objects.get(pk=data["bookId"])
         except Book.DoesNotExist:
             raise serializers.ValidationError("Book not found.")
 
@@ -23,15 +24,15 @@ class BorrowBookSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("No available copies for this book.")
 
         try:
-            Member.objects.get(pk=data['memberId'])
+            member = Member.objects.get(pk=data["id"])  # Updated field name here
         except Member.DoesNotExist:
             raise serializers.ValidationError("Member not found.")
 
         return data
 
     def create(self, validated_data):
-        book = Book.objects.get(pk=validated_data['bookId'])
-        member = Member.objects.get(pk=validated_data['memberId'])
+        book = Book.objects.get(pk=validated_data["bookId"])
+        member = Member.objects.get(pk=validated_data["id"])  # Updated field name here
 
         book.availableCopies -= 1
         book.save()

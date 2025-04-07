@@ -5,6 +5,8 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 import uuid
 from django.db import models
 
+from cloudinary.models import CloudinaryField
+
 class Book(models.Model):
     bookId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
@@ -12,6 +14,9 @@ class Book(models.Model):
     publishedYear = models.IntegerField()
     totalCopies = models.PositiveIntegerField()
     availableCopies = models.PositiveIntegerField()
+
+    # Add the Cloudinary ImageField here
+    image = CloudinaryField('image', blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -35,7 +40,7 @@ class MemberManager(BaseUserManager):
         return user
 
 class Member(AbstractBaseUser, PermissionsMixin):
-    memberId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20)
