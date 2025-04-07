@@ -40,7 +40,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,                   # Whether to rotate the refresh token
     'BLACKLIST_AFTER_ROTATION': True,                 # Whether to blacklist refresh tokens after rotation
     'ALGORITHM': 'HS256',                             # The algorithm used for encoding the JWT
-    'SIGNING_KEY': 'your-secret-key',                 # Secret key for signing the JWT
+    'SIGNING_KEY': os.environ.get("JWT_SECRET"),                 # Secret key for signing the JWT
 }
 
 # Application definition
