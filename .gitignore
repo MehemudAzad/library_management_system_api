@@ -1,2 +1,2 @@
-/venv
-project/.env
+venv/
+.env
